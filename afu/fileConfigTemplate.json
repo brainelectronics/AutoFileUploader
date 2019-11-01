@@ -1,0 +1,23 @@
+{
+    "server": [
+        {
+            "localPath": "/full/path/to/Documents/Arduino/build/",
+            "pattern": ".bin",
+            "name": "",
+            "remotePath": "remote/server/ota/folder",
+            "version": "version.txt"
+        },
+        {
+            "localPath": "/full/path/to/Documents/Arduino/build/",
+            "pattern": "",
+            "name": "sampleSketch.ino.map",
+            "remotePath": "remote/server/ota/folder/map_files",
+            "version": "version-for-map.txt"
+        }
+    ],
+    "device": {
+        "localPath": "/full/path/to/Documents/Arduino/build/",
+        "pattern": ".bin",
+        "name": ""
+    }
+}

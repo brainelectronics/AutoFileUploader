@@ -241,17 +241,19 @@ class AutoFileUploader(object):
     ##
     ## Create a unique version file for each found file
     ##
-    ## :param      timeBase:  The time base, either days since epoch or seconds
-    ## :type       timeBase:  string
+    ## :param      timeBase:       The time base, either days since epoch or seconds
+    ## :type       timeBase:       string
+    ## :param      customContent:  A user given customContent, optional, e.g. a timestamp
+    ## :type       customContent:  string
     ##
-    def versionizeAllFilesForServer(self, timeBase='days'):
+    def versionizeAllFilesForServer(self, timeBase='days', customContent=None):
         if self.uploadFileList:
             for file in self.uploadFileList:
                 versionFileDirectory = os.path.dirname(file['local'][0])
                 versionFileName = os.path.join(versionFileDirectory, file['version'])
 
                 # print "want to create version file at: %s" %(versionFileDirectory)
-                self.createVersionFile(filePath=versionFileName, timeBase=timeBase)
+                self.createVersionFile(filePath=versionFileName, timeBase=timeBase, customContent=customContent)
 
     ##
     ## Creates a version file.
@@ -259,25 +261,33 @@ class AutoFileUploader(object):
     ## :param      filePath:  The full file path with name of the file
     ## :param      timeBase:  The time base, either days since epoch or seconds
     ## :type       timeBase:  string
+    ## :param      timestamp: A user given custom content, optional, e.g. a timestamp
+    ## :type       timestamp: string
     ##
-    def createVersionFile(self, filePath, timeBase='days'):
+    def createVersionFile(self, filePath, timeBase='days', customContent=None):
         if os.path.exists(os.path.dirname(filePath)):
-            with open(filePath, "w") as aVersionFile:
+            if customContent == None:
                 epochDateTime = datetime.datetime.utcfromtimestamp(0)
                 todayDateTime = datetime.datetime.today()
 
                 if timeBase.lower() == "days":
-                    timestampSinceEpoch = (todayDateTime - epochDateTime).days
+                    # timestamp since epoch in days
+                    versionFileContent = (todayDateTime - epochDateTime).days
                 elif timeBase.lower() == "seconds":
-                    timestampSinceEpoch = int(time.time())
+                    # timestamp since epoch in seconds
+                    versionFileContent = int(time.time())
+            else:
+                # user provided custom
+                versionFileContent = customContent
 
-                aVersionFile.write("%s" %(timestampSinceEpoch))
+            with open(filePath, "w") as aVersionFile:
+                aVersionFile.write("%s" %(versionFileContent))
 
     ##
     ## Uploads all files to the server.
     ##
     def uploadAllFilesToServer(self):
-        self.uploadFilesToServer(fileList=afu.getAllFilesForServer())
+        self.uploadFilesToServer(fileList=self.getAllFilesForServer())
 
     ##
     ## Check if SFTP login data are set
@@ -473,7 +483,7 @@ if __name__ == '__main__':
     print "Found files for server"
     print json.dumps(afu.getAllFilesForServer(), indent=4, sort_keys=True)
 
-    afu.versionizeAllFilesForServer(timeBase="days")
+    afu.versionizeAllFilesForServer(timeBase="days", customContent=None)
 
     # afu.uploadFilesToServer(fileList=afu.getAllFilesForServer())
     afu.uploadAllFilesToServer()
@@ -485,4 +495,4 @@ if __name__ == '__main__':
     print afu.getFileForDevice()
     afu.uploadFileToDevice(theFile=afu.getFileForDevice())
 
-exit()
+# exit()

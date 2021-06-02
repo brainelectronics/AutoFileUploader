@@ -2,4 +2,4 @@ mechanize==0.4.3
 paramiko==2.6.0
 pysftp==0.2.9
 requests==2.22.0
-urllib3==1.25.8
+urllib3==1.26.5
